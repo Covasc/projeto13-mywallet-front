@@ -9,7 +9,7 @@ export default function NewEntry () {
 
     const apiURL = "";
     const navigate = useNavigate();
-    const [entry, setEntry] = useState({});
+    const [entry, setEntry] = useState({type: "entry"});
     const [disable, setDisable] = useState(false);
 
     function sendObject(event) {
@@ -34,8 +34,8 @@ export default function NewEntry () {
                 <h1>Nova entrada</h1>
             </Header>
             <form onSubmit={sendObject}>
-                <input disabled={disable} type='number' placeholder='Valor' required onChange={(entry) => setEntry({value: entry.target.value})} value={entry.name} />
-                <input disabled={disable} type='text' placeholder='Descrição' required onChange={(entry) => setEntry({text: entry.target.value})} value={entry.email} />
+                <input disabled={disable} type='number' placeholder='Valor' required onChange={(entry) => setEntry({value: entry.target.value})} value={entry.value} />
+                <input disabled={disable} type='text' placeholder='Descrição' required onChange={(entry) => setEntry({text: entry.target.value})} value={entry.text} />
                 <button disabled={disable} type='submit'>{disable === true? <ThreeDots color="white" height={80} width={80} />: 'Salvar entrada'}</button>
             </form>
         </NewEntryDiv>
