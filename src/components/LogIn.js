@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 import axios from "axios";
+import UserContext from '../contexts/UserContext';
+import { useContext } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ThreeDots } from 'react-loader-spinner';
@@ -10,10 +12,11 @@ import { ThreeDots } from 'react-loader-spinner';
 export default function LogIn () {
     //LOGIN FUNCTION
 
-    const apiURL = '';
+    const apiURL = 'http://localhost:5000/login';
     const navigate = useNavigate();
     const [entry, setEntry] = useState({});
     const [disable, setDisable] = useState(false);
+    const { setUserData } = useContext(UserContext);
 
     function sendObject(event) {
         //CREATE LOGIN OBJECT AND PREVENTS NEW ENTRIES WHILE WAYTING FOR API'S RESPONSE
@@ -21,12 +24,13 @@ export default function LogIn () {
         
         setDisable(true);
         const promise = axios.post(apiURL, entry);
-        promise.then(() => {
+        promise.then((response) => {
+            setUserData(response.data);
             setDisable(true);
             navigate('/home');
         });
         promise.catch(() => {
-            setDisable(true);
+            setDisable(false);
             alert('Usuário ou senha incorretos')
         });
     }
@@ -35,8 +39,8 @@ export default function LogIn () {
         <LogInDiv>
             <h1>MyWallet</h1>
             <form onSubmit={sendObject}>
-                <input disabled={disable} type='email' placeholder='E-mail' required onChange={(entry) => setEntry({email: entry.target.value})} value={entry.email} />
-                <input disabled={disable} type='password' placeholder='Senha' required onChange={(entry) => setEntry({password: entry.target.value})} value={entry.password} />
+                <input disabled={disable} type='email' placeholder='E-mail' required onChange={(e) => setEntry({...entry, email: e.target.value})} value={entry.email} />
+                <input disabled={disable} type='password' placeholder='Senha' required onChange={(e) => setEntry({...entry, password: e.target.value})} value={entry.password} />
                 <button disabled={disable} type='submit'>{disable === true? <ThreeDots color="white" height={80} width={80} />: 'Entrar'}</button>
             </form>
             <p onClick={() => navigate('/signin')}>Primeira vez? Cadastre-se!</p>

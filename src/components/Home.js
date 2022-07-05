@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import axios from "axios";
+import UserContext from "../contexts/UserContext";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ExitOutline } from 'react-ionicons';
 import { AddCircleOutline } from 'react-ionicons';
@@ -9,11 +11,29 @@ import { RemoveCircleOutline } from 'react-ionicons';
 export default function Home () {
 
     const navigate = useNavigate();
+    const { userData } = useContext(UserContext);
+    const apiURL = 'http://localhost:5000/user/movimentation'
+    const [movimentationList, setMovimentationList] = useState([]);
+    const [userName, setUserName] = useState("Usuário");
+    const [active, setActive] = useState(true);
+    console.log(movimentationList, userName);
+
+    useEffect( () => {
+        const config = {headers: {Authorization: `Bearer ${userData.token}`}}
+        const promise = axios.get(apiURL, config);
+        promise.then((response) => {
+            setMovimentationList(response.data.movimentation);
+            if (response.data.movimentation.length > 0) {
+                setActive(false);
+            }
+            setUserName(response.data.name);
+        });
+    } , []);
 
     return (
         <HomeDiv>
             <Header>
-                <h1>Olá, Usuário</h1>
+                <h1>Olá, {userName}</h1>
                 <IoIcon1
                     color={'white'} 
                     height="23px"
@@ -24,6 +44,12 @@ export default function Home () {
                 <div>
                     <p>Não há registros de entrada ou saída</p>
                 </div>
+                <ul>
+                    {movimentationList.map((register) => (
+                        <li><div className="gray">{register.time}<span className="black">{register.text}</span></div><div className={register.type === "entry" ? "green" : "red"}>{register.value}</div></li>
+                    ))}
+                </ul>
+                <p><span className="bold">SALDO</span><span className="total">R$ 10000</span></p>
             </History>
             <Footer>
                 <Entry onClick={() => navigate('/newentry')}>
@@ -86,15 +112,68 @@ const Header = styled.div`
 
 const History = styled.div`
     display: flex;
-    flex-direction: column;   
+    flex-direction: column; 
+    justify-content: space-between;  
     height: calc(100% - 114px);
     width: 100%;
     padding: 15px;
     background: #FFFFFF;
     border-radius: 5px;
 
+    ul {
+        width: 100%;
+
+        li {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin: 15px 0;
+
+            > div {
+                display: flex;
+                font-size: 16px;
+                color: black;
+                
+                span {
+                    margin-left: 10px;
+                }
+            }
+        }
+
+        .gray {
+            color: #c6c6c6; 
+        }
+
+        .black {
+            color: black;
+        }
+
+        .red {
+            color: #C70000;
+        }
+
+        .green {
+            color: #03AC00;
+        }
+
+    }
+
+    > p {
+        display: ${(props) => (props.active ? "none" : "flex")};
+        justify-content: space-between;
+
+        .bold {
+            color: black;
+            font-weight: 700;
+        }
+
+        .total {
+            color: green;
+        }
+    }
+
     > div {
-        display: flex;
+        display: ${(props) => (props.active ? "flex" : "none")};
         align-items: center;
         justify-content: center;
         width: 100%;

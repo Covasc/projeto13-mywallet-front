@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useState } from 'react';
+import UserContext from '../contexts/UserContext';
 import LogIn from "./LogIn";
 import SignIn from './SignIn';
 import Home from './Home';
@@ -7,7 +9,11 @@ import NewExpense from './NewExpense';
 
 
 export default function App () {
+
+    const [ userData, setUserData ] = useState({});
+
     return (
+        <UserContext.Provider value={{userData, setUserData}}>
         <BrowserRouter>
             <Routes>
                 <Route path='/' element={<LogIn />} />
@@ -17,5 +23,6 @@ export default function App () {
                 <Route path='/newexpense' element={<NewExpense />} />
             </Routes>
         </BrowserRouter>
+        </UserContext.Provider>
     );
 }
