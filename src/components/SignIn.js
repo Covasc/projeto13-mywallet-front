@@ -20,12 +20,13 @@ export default function SignIn () {
         setDisable(true);
         const promise = axios.post(apiURL, entry);
         promise.then(() => {
-            setDisable(true);
+            setDisable(false);
+            alert('Conta criada com sucesso!')
             navigate('/');
         });
         promise.catch(() => {
-            setDisable(true);
-            alert('Usuário ou senha incorretos')
+            setDisable(false);
+            alert('Dados inválidos. Verifique suas entradas')
         });
     }
 
@@ -33,10 +34,10 @@ export default function SignIn () {
         <LogInDiv>
             <h1>MyWallet</h1>
             <form onSubmit={sendObject}>
-                <input disabled={disable} type='text' placeholder='Nome' required onChange={(entry) => setEntry({name: entry.target.value})} value={entry.name} />
-                <input disabled={disable} type='email' placeholder='E-mail' required onChange={(entry) => setEntry({email: entry.target.value})} value={entry.email} />
-                <input disabled={disable} type='password' placeholder='Senha' required onChange={(entry) => setEntry({password: entry.target.value})} value={entry.password} />
-                <input disabled={disable} type='password' placeholder='Confirme a senha' required onChange={(entry) => setEntry({passwordConfirm: entry.target.value})} value={entry.passwordConfirm} />
+                <input disabled={disable} type='text' placeholder='Nome' required onChange={(e) => setEntry({...entry, name: e.target.value})} value={entry.name} />
+                <input disabled={disable} type='email' placeholder='E-mail' required onChange={(e) => setEntry({...entry, email: e.target.value})} value={entry.email} />
+                <input disabled={disable} type='password' placeholder='Senha' required onChange={(e) => setEntry({...entry, password: e.target.value})} value={entry.password} />
+                <input disabled={disable} type='password' placeholder='Confirme a senha' required onChange={(e) => setEntry({...entry, passwordConfirm: e.target.value})} value={entry.passwordConfirm} />
                 <button disabled={disable} type='submit'>{disable === true? <ThreeDots color="white" height={80} width={80} />: 'Cadastrar'}</button>
             </form>
             <p onClick={() => navigate('/')}>Já tem uma conta? Entre agora!</p>
