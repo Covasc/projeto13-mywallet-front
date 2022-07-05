@@ -55,7 +55,7 @@ export default function Home () {
                 />
             </Header>
             <History>
-                <NoData>
+                <NoData active={active}>
                     <p>Não há registros de entrada ou saída</p>
                 </NoData>
                 <ul>
@@ -63,7 +63,7 @@ export default function Home () {
                         <li><div className="gray">{register.time}<span className="black">{register.text}</span></div><div className={register.type === "entry" ? "green" : "red"}>{register.value}</div></li>
                     ))}
                 </ul>
-                <TotalBar><span className="bold">SALDO</span><span className={totalValue() > 0 ? "green" : "red"}>R$ {totalValue()}</span></TotalBar>
+                <TotalBar active={active}><span className="bold">SALDO</span><span className={totalValue() > 0 ? "green" : "red"}>R$ {totalValue()}</span></TotalBar>
             </History>
             <Footer>
                 <Entry onClick={() => navigate('/newentry')}>
