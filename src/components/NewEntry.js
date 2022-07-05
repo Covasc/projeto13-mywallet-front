@@ -1,30 +1,35 @@
 import styled from "styled-components";
 import axios from "axios";
-import { useState } from "react";
+import UserContext from "../contexts/UserContext";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
 
 
 export default function NewEntry () {
 
-    const apiURL = "";
+    const apiURL = "http://localhost:5000/user/movimentation";
     const navigate = useNavigate();
+    const { userData } = useContext(UserContext);
     const [entry, setEntry] = useState({type: "entry"});
     const [disable, setDisable] = useState(false);
+    console.log(entry);
 
     function sendObject(event) {
         //CREATE LOGIN OBJECT AND PREVENTS NEW ENTRIES WHILE WAYTING FOR API'S RESPONSE
         event.preventDefault();
+
+        const config = {headers: {Authorization: `Bearer ${userData.token}`}};
         
         setDisable(true);
-        const promise = axios.post(apiURL, entry);
+        const promise = axios.post(apiURL, entry, config);
         promise.then(() => {
-            setDisable(true);
-            navigate('/');
+            setDisable(false);
+            navigate('/home');
         });
         promise.catch(() => {
-            setDisable(true);
-            alert('Usuário ou senha incorretos')
+            setDisable(false);
+            alert('Dados inválidos. Verifique suas entradas')
         });
     }
 
@@ -34,8 +39,8 @@ export default function NewEntry () {
                 <h1>Nova entrada</h1>
             </Header>
             <form onSubmit={sendObject}>
-                <input disabled={disable} type='number' placeholder='Valor' required onChange={(entry) => setEntry({value: entry.target.value})} value={entry.value} />
-                <input disabled={disable} type='text' placeholder='Descrição' required onChange={(entry) => setEntry({text: entry.target.value})} value={entry.text} />
+                <input disabled={disable} type='number' placeholder='Valor' required onChange={(e) => setEntry({...entry, value: Number(e.target.value)})} value={entry.value} />
+                <input disabled={disable} type='text' placeholder='Descrição' required onChange={(e) => setEntry({...entry, text: e.target.value})} value={entry.text} />
                 <button disabled={disable} type='submit'>{disable === true? <ThreeDots color="white" height={80} width={80} />: 'Salvar entrada'}</button>
             </form>
         </NewEntryDiv>

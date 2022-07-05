@@ -16,7 +16,21 @@ export default function Home () {
     const [movimentationList, setMovimentationList] = useState([]);
     const [userName, setUserName] = useState("Usuário");
     const [active, setActive] = useState(true);
-    console.log(movimentationList, userName);
+    console.log(active);
+
+    function totalValue() {
+
+        let total = 0;
+
+        for (let i=0; i<movimentationList.length; i++) {
+            if (movimentationList[i].type === "entry") {
+                total = total + movimentationList[i].value;
+            } else {
+                total = total - movimentationList[i].value;
+            }
+        }
+        return total;
+    } 
 
     useEffect( () => {
         const config = {headers: {Authorization: `Bearer ${userData.token}`}}
@@ -41,15 +55,15 @@ export default function Home () {
                 />
             </Header>
             <History>
-                <div>
+                <NoData>
                     <p>Não há registros de entrada ou saída</p>
-                </div>
+                </NoData>
                 <ul>
                     {movimentationList.map((register) => (
                         <li><div className="gray">{register.time}<span className="black">{register.text}</span></div><div className={register.type === "entry" ? "green" : "red"}>{register.value}</div></li>
                     ))}
                 </ul>
-                <p><span className="bold">SALDO</span><span className="total">R$ 10000</span></p>
+                <TotalBar><span className="bold">SALDO</span><span className={totalValue() > 0 ? "green" : "red"}>R$ {totalValue()}</span></TotalBar>
             </History>
             <Footer>
                 <Entry onClick={() => navigate('/newentry')}>
@@ -158,33 +172,38 @@ const History = styled.div`
 
     }
 
-    > p {
-        display: ${(props) => (props.active ? "none" : "flex")};
-        justify-content: space-between;
+`
 
-        .bold {
-            color: black;
-            font-weight: 700;
-        }
+const TotalBar = styled.div`
+    display: ${(props) => (props.active ? "none" : "flex")};
+    justify-content: space-between;
 
-        .total {
-            color: green;
-        }
+    .bold {
+        color: black;
+        font-weight: 700;
     }
 
-    > div {
-        display: ${(props) => (props.active ? "flex" : "none")};
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 100%;
-        text-align: center;
+    .green{
+        color: #03AC00;
+    }
 
-        p {
-            max-width: 180px;
-            font-size: 20px;
-            color: #868686;
-        }
+    .red{
+        color: #C70000;
+    }
+`
+
+const NoData = styled.div`
+    display: ${(props) => (props.active ? "flex" : "none")};
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+
+    p {
+        max-width: 180px;
+        font-size: 20px;
+        color: #868686;
     }
 `
 
